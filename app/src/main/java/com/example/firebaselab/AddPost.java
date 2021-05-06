@@ -300,5 +300,48 @@ public class AddPost extends Fragment {
         return size;
     }
 
+    private void writeToXml(String title, String description, String imageUri, String songUri) {
+        try {
+            FileOutputStream fileos = getContext().openFileOutput("Posts.xml", Context.MODE_APPEND);
+            XmlSerializer xmlSerializer = Xml.newSerializer();
+            StringWriter writer = new StringWriter();
+            xmlSerializer.setOutput(writer);
 
+            xmlSerializer.startTag(null, "post");
+            xmlSerializer.startTag(null, "title");
+            xmlSerializer.text(title);
+            xmlSerializer.endTag(null, "title");
+
+
+            if (!description.isEmpty()) {
+                xmlSerializer.startTag(null, "description");
+                xmlSerializer.text(description);
+                xmlSerializer.endTag(null, "description");
+            }
+
+
+            if (imageUri != null) {
+                xmlSerializer.startTag(null, "imageUri");
+                xmlSerializer.text(imageUri);
+                xmlSerializer.endTag(null, "imageUri");
+            }
+
+
+            if (songUri != null) {
+                xmlSerializer.startTag(null, "songUri");
+                xmlSerializer.text(songUri);
+                xmlSerializer.endTag(null, "songUri");
+            }
+
+
+            xmlSerializer.endTag(null, "post");
+            xmlSerializer.endDocument();
+            xmlSerializer.flush();
+            String dataWrite = writer.toString();
+            fileos.write(dataWrite.getBytes());
+            fileos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
