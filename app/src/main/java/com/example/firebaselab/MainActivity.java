@@ -68,6 +68,53 @@ public class MainActivity extends AppCompatActivity implements PostsAdapter.OnPo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final Context context = getApplicationContext();
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        size = getDisplaySize();
+        posts = new ArrayList<>();
+
+        postsList = findViewById(R.id.rv);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        postsList.setLayoutManager(layoutManager);
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("database")) {
+            String database = intent.getStringExtra("database");
+            if (database.equals("firebase"))
+                sqlite = false;
+            else
+                sqlite = true;
+        }
+
+
+
+        if (sqlite) {
+
+            db = new PostsSQLite.PostsReaderDbHelper(context).getWritableDatabase();
+            try {
+                loadPostsFromSQlite();
+            } catch (MalformedURLException | ExecutionException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            fDatabase = FirebaseDatabase.getInstance().getReference();
+            fDatabase.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+
+        }
+        //postsAdapter = new PostsAdapter(posts, this);
+
     }
 
 
