@@ -48,7 +48,20 @@ public final class PostsSQLite {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
+        public void onCreate(SQLiteDatabase db) {
+            db.execSQL(SQL_CREATE_USERS);
+            db.execSQL(SQL_CREATE_POSTS);
+        }
 
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            db.execSQL(SQL_DELETE_POSTS);
+            db.execSQL(SQL_DELETE_USERS);
+            onCreate(db);
+        }
+
+        public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            onUpgrade(db, oldVersion, newVersion);
+        }
     }
 
 }
